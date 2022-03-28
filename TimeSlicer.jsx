@@ -1,28 +1,28 @@
 /** 
  * Photoshop script for creating a timeslice from a stack of images.
  * 
- * Each slice is  equal in width. The order of the slices is the same as that of the layers. The top layer can appear either to the left or to the left. When creating the timeslice, all existing masks are deleted.
+ * Each slice is equal in width. The order of the slices is the same as that of the layers. The top layer can appear either to the left or to the left. When the timeslice is created, all existing masks are deleted.
  * 
  * TimeSlicer.jsx
  * TimeSlicer
  * 
  * Created by Haoyuan Kevin Xia on 10/30/19.
- * Version 1.0
  */
 
 "use strict";
 
 app.bringToFront();
 
+
 /*
 Code for Import https://scriptui.joonas.me — (Triple click to select): 
-{"activeId":4,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":null,"windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":false},"text":"Time Slicer","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["center","top"]}},"item-1":{"id":1,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Direction","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["left","top"],"alignment":null}},"item-2":{"id":2,"type":"RadioButton","parentId":3,"style":{"enabled":true,"varName":"leftToRightRadioButton","text":"Left to Right","preferredSize":[0,0],"alignment":null,"helpTip":null,"checked":false}},"item-3":{"id":3,"type":"Group","parentId":1,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"column","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-4":{"id":4,"type":"RadioButton","parentId":3,"style":{"enabled":true,"varName":"rightToLeftRadioButton","text":"Right to Left","preferredSize":[0,0],"alignment":null,"helpTip":null,"checked":true}},"item-5":{"id":5,"type":"Group","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"cancelButton","text":"Cancel","justify":"center","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"okButton","text":"OK","justify":"center","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-8":{"id":8,"type":"StaticText","parentId":1,"style":{"enabled":true,"varName":"directionDescriptionLabel","creationProps":{"truncate":"none","multiline":true,"scrolling":false},"softWrap":false,"text":"The layer on top appears to the right.","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}}},"order":[0,1,3,2,4,8,5,6,7],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":true,"functionWrapper":false,"itemReferenceList":"None"}}
+{"activeId":8,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":null,"windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":false},"text":"TimeSlicer","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["center","top"]}},"item-1":{"id":1,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Direction","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["left","top"],"alignment":null}},"item-2":{"id":2,"type":"RadioButton","parentId":3,"style":{"enabled":true,"varName":"leftToRightRadioButton","text":"Left to Right","preferredSize":[0,0],"alignment":null,"helpTip":null,"checked":true}},"item-3":{"id":3,"type":"Group","parentId":1,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"column","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-4":{"id":4,"type":"RadioButton","parentId":3,"style":{"enabled":true,"varName":"rightToLeftRadioButton","text":"Right to Left","preferredSize":[0,0],"alignment":null,"helpTip":null,"checked":false}},"item-5":{"id":5,"type":"Group","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"cancelButton","text":"Cancel","justify":"center","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"okButton","text":"OK","justify":"center","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-8":{"id":8,"type":"StaticText","parentId":1,"style":{"enabled":true,"varName":"directionDescriptionLabel","creationProps":{"truncate":"none","multiline":true,"scrolling":false},"softWrap":false,"text":"The layer on top appears to the left.","justify":"left","preferredSize":[250,0],"alignment":null,"helpTip":null}}},"order":[0,1,3,2,4,8,5,6,7],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":true,"functionWrapper":false,"itemReferenceList":"None","afterEffectsDockable":false}}
 */
 
 // DIALOG
 // ======
 var dialog = new Window("dialog");
-dialog.text = "Time Slicer";
+dialog.text = "TimeSlicer";
 dialog.orientation = "column";
 dialog.alignChildren = ["center", "top"];
 dialog.spacing = 10;
@@ -47,15 +47,16 @@ group1.margins = 0;
 
 var leftToRightRadioButton = group1.add("radiobutton", undefined, undefined, { name: "leftToRightRadioButton" });
 leftToRightRadioButton.text = "Left to Right";
+leftToRightRadioButton.value = true;
 
 var rightToLeftRadioButton = group1.add("radiobutton", undefined, undefined, { name: "rightToLeftRadioButton" });
 rightToLeftRadioButton.text = "Right to Left";
-rightToLeftRadioButton.value = true;
 
 // PANEL1
 // ======
 var directionDescriptionLabel = panel1.add("statictext", undefined, undefined, { name: "directionDescriptionLabel", multiline: true });
-directionDescriptionLabel.text = "The layer on top appears to the right.";
+directionDescriptionLabel.text = "The layer on top appears to the left.";
+directionDescriptionLabel.preferredSize.width = 250;
 
 // GROUP2
 // ======
@@ -72,6 +73,7 @@ cancelButton.preferredSize.width = 80;
 var okButton = group2.add("button", undefined, undefined, { name: "okButton" });
 okButton.text = "OK";
 okButton.preferredSize.width = 80;
+
 
 // Radio button handler
 function updateDirectionDescription() {
